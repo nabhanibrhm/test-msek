@@ -11,8 +11,20 @@ services:
       - "5432:5432"
     volumes:
       - ./db/init:/docker-entrypoint-initdb.d
-      - ./data:/data
+      - ./task1/data:/data
       - db_data:/var/lib/postgresql/data
+
+  dash:
+    build:
+      context: .
+      dockerfile: Dockerfile.dash
+    container_name: crm_dash
+    ports:
+      - "8050:8050"
+    volumes:
+      - ./task1:/app/task1
+    depends_on:
+      - db
 
 volumes:
   db_data:

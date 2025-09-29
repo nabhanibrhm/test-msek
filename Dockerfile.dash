@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system deps if needed
+RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
+
+# Install dependencies
+RUN pip install dash plotly pandas psycopg2-binary
+
+COPY ./task1 /app/task1
+
+CMD ["python", "task1/app.py"]
