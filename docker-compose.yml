@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    container_name: crm_postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Test1234
+      POSTGRES_DB: crmdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./data:/data
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
