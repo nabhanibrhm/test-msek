@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     image: postgres:15
@@ -14,17 +13,26 @@ services:
       - ./task1/data:/data
       - db_data:/var/lib/postgresql/data
 
-  dash:
+  task1:
     build:
       context: .
-      dockerfile: Dockerfile.dash
-    container_name: crm_dash
-    ports:
-      - "8050:8050"
+      dockerfile: Dockerfile.task1
+    container_name: crm_task1
     volumes:
       - ./task1:/app/task1
     depends_on:
       - db
+    command: ["python", "task1/app.py"]
+
+  task2:
+    build:
+      context: .
+      dockerfile: Dockerfile.task2
+    container_name: crm_task2
+    volumes:
+      - ./task2:/app/task2
+    ports:
+      - "8050:8050"
 
 volumes:
-  db_data:
+  db_data: {}

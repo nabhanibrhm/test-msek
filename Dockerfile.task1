@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y libpq-dev gcc && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies
-RUN pip install dash plotly pandas psycopg2-binary
+RUN pip install pandas matplotlib reportlab
 
 COPY ./task1 /app/task1
 
