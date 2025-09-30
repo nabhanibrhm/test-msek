@@ -110,6 +110,7 @@ else:
 #     fig_scatter = px.scatter(title="Insufficient columns for scatter (need property_value & funded_amount)")
 
 # 3) Time series: avg funded_amount by year
+
 if "funded_date" in df.columns and df["funded_date"].notna().any():
     df["year"] = df["funded_date"].dt.to_period("Y").dt.to_timestamp()
     trend = df.groupby("year", as_index=False).agg(avg_funded_amount=("funded_amount","mean"))
