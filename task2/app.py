@@ -103,5 +103,4 @@ app.layout = html.Div([
 ])
 
 if __name__ == "__main__":
-    # Dash ≥3: use app.run
     app.run(host="0.0.0.0", port=8050, debug=True)
