@@ -3,7 +3,7 @@ import pandas as pd
 from dash import Dash, dcc, html
 import plotly.express as px
 
-# ---------- Load and normalize ----------
+
 fn = "task2/data/LuxuryLoanPortfolio.csv"
 df = pd.read_csv(fn, dtype=str)
 
@@ -64,51 +64,6 @@ if "purpose" in df.columns:
 else:
     fig_purpose = px.bar(title="No purpose column found")
 
-
-# 2) Loan Duration Histogram
-# normalize column naming like "duration years" → "duration_years"
-# duration_col = None
-# for c in df.columns:
-#     if c in ["duration_years", "duration_year"]:  # flexible naming
-#         duration_col = c
-#         break
-
-# if duration_col:
-#     # Coerce to numeric
-#     df[duration_col] = pd.to_numeric(df[duration_col], errors="coerce")
-#     df_cleaned = df.dropna(subset=[duration_col])
-
-#     fig_duration = px.histogram(
-#         df_cleaned,
-#         x=duration_col,
-#         nbins=20,
-#         title="Distribution of Loan Durations (Years)",
-#         labels={duration_col: "Duration (Years)"},
-#     )
-#     fig_duration.update_layout(
-#         xaxis_title="Duration (Years)",
-#         yaxis_title="Frequency"
-#     )
-# else:
-#     fig_duration = px.histogram(title="No duration column found")
-
-
-# scatter_color = "state" if "state" in df.columns else ("purpose" if "purpose" in df.columns else None)
-# scatter_size = "loan_balance" if "loan_balance" in df.columns else None
-
-# if "property_value" in df.columns and "funded_amount" in df.columns:
-#     fig_scatter = px.scatter(
-#         df,
-#         x="property_value",
-#         y="funded_amount",
-#         size=scatter_size,
-#         color=scatter_color,
-#         hover_data=[c for c in ("loan_id","firstname","lastname") if c in df.columns],
-#         title="Funded Amount vs Property Value"
-#     )
-# else:
-#     fig_scatter = px.scatter(title="Insufficient columns for scatter (need property_value & funded_amount)")
-
 # 3) Time series: avg funded_amount by year
 
 if "funded_date" in df.columns and df["funded_date"].notna().any():
@@ -123,7 +78,6 @@ if "funded_date" in df.columns and df["funded_date"].notna().any():
         labels={"avg_funded_amount": "Avg Funded Amount", "year": "Year"}
     )
 else:
-    # fallback: boxplot of funded_amount by state (if no dates)
     if "funded_amount" in df.columns and ("state" in df.columns or "city" in df.columns):
         bycol = "state" if "state" in df.columns else "city"
         fig_time = px.box(df, x=bycol, y="funded_amount", title=f"Funded Amount by {bycol.title()}")
@@ -138,9 +92,6 @@ app.layout = html.Div([
 
     html.H3("1. Funded Amount Distribution"),
     dcc.Graph(figure=fig_hist),
-
-    # html.H3("2. Funded Amount vs Property Value"),
-    # dcc.Graph(figure=fig_duration),
 
     html.H3("2. Loan Purpose Distribution"),
     dcc.Graph(figure=fig_purpose),
