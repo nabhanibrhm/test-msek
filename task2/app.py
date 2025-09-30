@@ -5,7 +5,7 @@ import plotly.express as px
 
 # ---------- Load and normalize ----------
 fn = "task2/data/LuxuryLoanPortfolio.csv"
-df = pd.read_csv(fn, dtype=str)  # read as strings first to be safe
+df = pd.read_csv(fn, dtype=str)
 
 # normalize column names to snake_case and lower-case
 df.columns = (
@@ -16,11 +16,6 @@ df.columns = (
     .str.strip("_")
 )
 
-# Helpful: show available columns if you need to debug
-# print("columns:", list(df.columns))
-
-# ---------- Convert & coerce numeric/date columns ----------
-# common numeric candidates in your file
 maybe_nums = [
     "funded_amount", "payments", "total_past_payments",
     "loan_balance", "property_value",
@@ -49,22 +44,70 @@ if "funded_amount" in df.columns:
 else:
     fig_hist = px.histogram(title="No funded_amount column found")
 
-# 2) Scatter: property_value vs funded_amount
-scatter_color = "state" if "state" in df.columns else ("purpose" if "purpose" in df.columns else None)
-scatter_size = "loan_balance" if "loan_balance" in df.columns else None
+# 2) Loan Purpose Distribution
+if "purpose" in df.columns:
+    purpose_counts = df["purpose"].value_counts().reset_index()
+    purpose_counts.columns = ["purpose", "count"]
 
-if "property_value" in df.columns and "funded_amount" in df.columns:
-    fig_scatter = px.scatter(
-        df,
-        x="property_value",
-        y="funded_amount",
-        size=scatter_size,
-        color=scatter_color,
-        hover_data=[c for c in ("loan_id","firstname","lastname") if c in df.columns],
-        title="Funded Amount vs Property Value"
+    fig_purpose = px.bar(
+        purpose_counts,
+        x="purpose",
+        y="count",
+        title="Distribution of Loan Purposes",
+        labels={"purpose": "Purpose", "count": "Count"},
+    )
+    fig_purpose.update_layout(
+        xaxis_tickangle=-45, 
+        xaxis_title="Purpose",
+        yaxis_title="Count"
     )
 else:
-    fig_scatter = px.scatter(title="Insufficient columns for scatter (need property_value & funded_amount)")
+    fig_purpose = px.bar(title="No purpose column found")
+
+
+# 2) Loan Duration Histogram
+# normalize column naming like "duration years" → "duration_years"
+# duration_col = None
+# for c in df.columns:
+#     if c in ["duration_years", "duration_year"]:  # flexible naming
+#         duration_col = c
+#         break
+
+# if duration_col:
+#     # Coerce to numeric
+#     df[duration_col] = pd.to_numeric(df[duration_col], errors="coerce")
+#     df_cleaned = df.dropna(subset=[duration_col])
+
+#     fig_duration = px.histogram(
+#         df_cleaned,
+#         x=duration_col,
+#         nbins=20,
+#         title="Distribution of Loan Durations (Years)",
+#         labels={duration_col: "Duration (Years)"},
+#     )
+#     fig_duration.update_layout(
+#         xaxis_title="Duration (Years)",
+#         yaxis_title="Frequency"
+#     )
+# else:
+#     fig_duration = px.histogram(title="No duration column found")
+
+
+# scatter_color = "state" if "state" in df.columns else ("purpose" if "purpose" in df.columns else None)
+# scatter_size = "loan_balance" if "loan_balance" in df.columns else None
+
+# if "property_value" in df.columns and "funded_amount" in df.columns:
+#     fig_scatter = px.scatter(
+#         df,
+#         x="property_value",
+#         y="funded_amount",
+#         size=scatter_size,
+#         color=scatter_color,
+#         hover_data=[c for c in ("loan_id","firstname","lastname") if c in df.columns],
+#         title="Funded Amount vs Property Value"
+#     )
+# else:
+#     fig_scatter = px.scatter(title="Insufficient columns for scatter (need property_value & funded_amount)")
 
 # 3) Time series: avg funded_amount by year
 if "funded_date" in df.columns and df["funded_date"].notna().any():
@@ -90,13 +133,16 @@ else:
 app = Dash(__name__)
 app.layout = html.Div([
     html.H1("Luxury Loan Portfolio Dashboard"),
-    html.P("3 charts: Histogram, Scatter, Time series (or fallback)."),
+    html.P("3 charts: Histogram, Loan Duration, Time series (or fallback)."),
 
     html.H3("1. Funded Amount Distribution"),
     dcc.Graph(figure=fig_hist),
 
-    html.H3("2. Funded Amount vs Property Value"),
-    dcc.Graph(figure=fig_scatter),
+    # html.H3("2. Funded Amount vs Property Value"),
+    # dcc.Graph(figure=fig_duration),
+
+    html.H3("2. Loan Purpose Distribution"),
+    dcc.Graph(figure=fig_purpose),
 
     html.H3("3. Time series / Regional boxplot"),
     dcc.Graph(figure=fig_time),
