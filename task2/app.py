@@ -7,12 +7,11 @@ import plotly.express as px
 fn = "task2/data/LuxuryLoanPortfolio.csv"
 df = pd.read_csv(fn, dtype=str)
 
-# normalize column names to snake_case and lower-case
 df.columns = (
     df.columns
     .str.strip()
     .str.lower()
-    .str.replace(r"[^0-9a-z]+", "_", regex=True)  # non-alphanumeric -> underscore
+    .str.replace(r"[^0-9a-z]+", "_", regex=True)  
     .str.strip("_")
 )
 
