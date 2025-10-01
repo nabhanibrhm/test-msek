@@ -8,7 +8,7 @@ Task 1: Complaint Resolution Analysis (static PDF report)
 
 Task 2: Luxury Loan Portfolio Dashboard (interactive Plotly Dash app)
 
-Task 3 - 5 : In answer3-5.txt
+Task 3 - 5 : In answer3-5.docx
 
 ### Prerequisites For Task 1 - 2
 
