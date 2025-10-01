@@ -24,9 +24,6 @@ COPY crm_events
 FROM '/data/CRMEvents.csv'
 WITH (FORMAT csv, HEADER true, DELIMITER ',');
 
--- ======================
--- CRM Call Logs Table
--- ======================
 CREATE TABLE crm_call_logs (
     date_received  DATE,
     complaint_id   TEXT,
